@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using crispy.Models;
+using crispy.ViewModels;
 
 namespace crispy.Controllers
 {
@@ -15,85 +16,54 @@ namespace crispy.Controllers
         public ActionResult Random()
         {
             var movie = new Movie() { Name = "bob" };
-
-            return View(movie );
-        }
-        // GET: Movies
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: Movies/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Movies/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Movies/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
+            var customers = new List<Customer>
             {
-                // TODO: Add insert logic here
+                new Customer { Name =   "customer1"},
+                new Customer { Name =   "customer2"}
+            };
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+
+             var viewModel = new RandomMovieViewModel
+             {
+             Movie = movie,
+             Customers = customers
+
+             };
+          //  var viewResult = new ViewResult();
+           // viewResult.ViewData.Model;
+
+            // return new ViewResult();
+            return View(viewModel);// both works
         }
 
-        // GET: Movies/Edit/5
+
+
+
+        // GET: Movies/Edit
         public ActionResult Edit(int id)
         {
-            return View();
+            return Content("id=" + id);
         }
 
-        // POST: Movies/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
+        // GET: Movies/ByReleaseDate
 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+        //attribute routing
+        [Route("movies/released/{year}/{month:regex(\\d{4}):range(1,12)}" )]
+        public ActionResult ByReleaseDate(int year, int month)
+        {
+            return Content(year + "/" +month);
         }
 
-        // GET: Movies/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Movies/Index
+        public ActionResult Index(int? pageIndex, string sortBy)
         {
-            return View();
-        }
+            if (pageIndex.HasValue)
+                pageIndex = 1;
+            if (String.IsNullOrWhiteSpace(sortBy))
+                sortBy = "Name";
 
-        // POST: Movies/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            return Content(String.Format("pageIndex={0}&sortBy={1}", pageIndex, sortBy));
         }
     }
+
 }
